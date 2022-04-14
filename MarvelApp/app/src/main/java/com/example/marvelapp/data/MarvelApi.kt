@@ -13,7 +13,7 @@ interface MarvelApi {
         @Query("orderBy") orderBy: String,
         @Query("ts") timestamp: Long,
         @Query("hash") hash: String
-    ): Single<List<CharacterResult>>
+    ): Single<CharacterResult>
 
     @GET("v1/public/characters/{id}?")
     fun getCharacterById(
@@ -29,5 +29,5 @@ interface MarvelApi {
         @Query("orderBy") orderBy: String,
         @Query("ts") timestamp: Long,
         @Query("hash") hash: String
-    ): Single<List<CharacterResult>>
+    ): Single<CharacterResult>
 }

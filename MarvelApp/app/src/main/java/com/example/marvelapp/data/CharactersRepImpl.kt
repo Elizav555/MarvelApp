@@ -20,12 +20,13 @@ class CharactersRepImpl(
 
     override fun getCharacters(limit: Int): Single<List<Character>> =
         api.getCharacters(limit, orderBy = Order.MODIFIED.query, timestamp, hash)
-            .map { list -> list.map { charactersMapper.map(it) } }
+            .map { list -> list.data.results.map { charactersMapper.map(it) } }
 
     override fun getCharacterById(characterId: Int): Single<Character> =
-        api.getCharacterById(characterId, timestamp, hash).map { charactersMapper.map(it) }
+        api.getCharacterById(characterId, timestamp, hash)
+            .map { charactersMapper.map(it.data.results.first()) }
 
     override fun getCharactersByName(nameStartsWith: String, limit: Int): Single<List<Character>> =
         api.getCharactersByName(nameStartsWith, limit, Order.NAME.query, timestamp, hash)
-            .map { list -> list.map { charactersMapper.map(it) } }
+            .map { list -> list.data.results.map { charactersMapper.map(it) } }
 }

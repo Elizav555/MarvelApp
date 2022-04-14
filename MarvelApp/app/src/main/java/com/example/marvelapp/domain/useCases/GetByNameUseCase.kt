@@ -10,7 +10,7 @@ class GetByNameUseCase @Inject constructor(
     private val charactersRep: CharactersRep
 ) {
     operator fun invoke(name: String): Single<List<Character>> =
-        charactersRep.getCharactersByName(name, 3).subscribeOn(
+        charactersRep.getCharactersByName(name, 20).subscribeOn(
             Schedulers.io()
         )
 }

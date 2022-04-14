@@ -86,6 +86,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         listViewModel.charactersList.observe(viewLifecycleOwner) { result ->
             result.fold(onSuccess = {
                 characters = it
+                charactersAdapter.submitList(it)
             }, onFailure = {
                 Log.e("characters error",it.message.toString())
             })
