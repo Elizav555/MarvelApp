@@ -4,6 +4,7 @@ import androidx.viewbinding.BuildConfig
 import com.example.marvelapp.data.CharactersRepImpl
 import com.example.marvelapp.data.MarvelApi
 import com.example.marvelapp.data.mappers.CharactersMapper
+import com.example.marvelapp.data.utils.MD5
 import com.example.marvelapp.di.intercepters.ApiIntercept
 import com.example.marvelapp.domain.CharactersRep
 import dagger.Module
@@ -14,6 +15,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
@@ -23,11 +25,13 @@ class DataModule {
     @Provides
     fun provideCharactersRepository(
         api: MarvelApi,
-        charactersMapper: CharactersMapper
+        charactersMapper: CharactersMapper,
+        mD5: MD5
     ): CharactersRep {
         return CharactersRepImpl(
             api = api,
-            charactersMapper = charactersMapper
+            charactersMapper = charactersMapper,
+            mD5
         )
     }
 
@@ -43,6 +47,7 @@ class DataModule {
         .baseUrl(BASE_URL)
         .client(okhttp)
         .addConverterFactory(converterFactory)
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
 
     @Provides
@@ -66,13 +71,12 @@ class DataModule {
     ) = OkHttpClient.Builder()
         .addInterceptor(apiKeyInterceptor)
         .also {
-            if (BuildConfig.DEBUG) {
                 it.addInterceptor(
                     HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY)
                 )
-            }
         }
+        .cache(null)
         .build()
 
     @Provides
@@ -82,9 +86,8 @@ class DataModule {
     fun provideCharactersMapper(): CharactersMapper = CharactersMapper()
 
     companion object {
-        private const val BASE_URL = "https://gateway.marvel.com:443/v1/public/"
-        private const val API_KEY = "10d35df1efc1db2f16f440e83fef817c"
-        private const val QUERY_API_KEY = "10d35df1efc1db2f16f440e83fef817c"
+        private const val BASE_URL = "http://gateway.marvel.com"
+        private const val API_KEY = com.example.marvelapp.BuildConfig.MARVEL_PUBLIC_KEY
+        private const val QUERY_API_KEY = "apikey"
     }
 }
-

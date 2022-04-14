@@ -1,17 +1,18 @@
 package com.example.marvelapp.domain
 
 import com.example.marvelapp.domain.entities.Character
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 
 interface CharactersRep {
-    suspend fun getCharacters(limit: Int): List<Character>
+    fun getCharacters(limit: Int): Single<List<Character>>
 
     @GET("characters/{id}")
-    suspend fun getCharacterById(characterId: Int): Character
+    fun getCharacterById(characterId: Int): Single<Character>
 
     @GET("characters?orderBy=name")
-    suspend fun getCharactersByName(
+    fun getCharactersByName(
         nameStartsWith: String,
         limit: Int,
-    ): List<Character>
+    ): Single<List<Character>>
 }

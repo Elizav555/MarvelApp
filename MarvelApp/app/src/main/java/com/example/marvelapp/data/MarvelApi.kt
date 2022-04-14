@@ -1,25 +1,33 @@
 package com.example.marvelapp.data
 
 import com.example.marvelapp.data.response.CharacterResult
-import com.example.marvelapp.data.utils.Order
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MarvelApi {
-    @GET("characters?")
-    suspend fun getCharacters(
+    @GET("v1/public/characters?")
+    fun getCharacters(
         @Query("limit") limit: Int,
-        @Query("orderBy") orderBy: Order
-    ): List<CharacterResult>
+        @Query("orderBy") orderBy: String,
+        @Query("ts") timestamp: Long,
+        @Query("hash") hash: String
+    ): Single<List<CharacterResult>>
 
-    @GET("characters/{id}")
-    suspend fun getCharacterById(@Path("id") characterId: Int): CharacterResult
+    @GET("v1/public/characters/{id}?")
+    fun getCharacterById(
+        @Path("id") characterId: Int,
+        @Query("ts") timestamp: Long,
+        @Query("hash") hash: String
+    ): Single<CharacterResult>
 
-    @GET("characters?")
-    suspend fun getCharactersByName(
+    @GET("v1/public/characters?")
+    fun getCharactersByName(
         @Query("nameStartsWith") nameStartsWith: String,
         @Query("limit") limit: Int,
-        @Query("orderBy") orderBy: Order
-    ): List<CharacterResult>
+        @Query("orderBy") orderBy: String,
+        @Query("ts") timestamp: Long,
+        @Query("hash") hash: String
+    ): Single<List<CharacterResult>>
 }
