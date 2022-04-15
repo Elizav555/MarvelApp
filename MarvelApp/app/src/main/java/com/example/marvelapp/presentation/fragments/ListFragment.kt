@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.marvelapp.R
@@ -31,7 +33,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     private var charactersAdapter: CharactersAdapter by autoCleared()
     private var characters = listOf<Character>()
     private val listViewModel: ListViewModel by viewModels()
-    val disposables = CompositeDisposable()
+    private val disposables = CompositeDisposable()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,7 +46,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
-        listViewModel.onCharactersSearch("Ba")
+        listViewModel.getCharacters()
         init()
         configureSearch()
     }
@@ -56,7 +58,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
     private fun configureSearch() {
         binding.searchView.observeText()
-            .filter { it.length > 2 && it.isNotBlank() }
+            .filter { it.length > 1 && it.isNotBlank() }
             .distinctUntilChanged()
             .debounce(500L, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
@@ -68,7 +70,8 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     }
 
     private fun init() {
-        charactersAdapter = CharactersAdapter()
+        val navigateAction = { characterId: Int -> navigateToDetail(characterId) }
+        charactersAdapter = CharactersAdapter(navigateAction)
         with(binding.recyclerView) {
             adapter = charactersAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -82,15 +85,33 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         charactersAdapter.submitList(characters)
     }
 
+    private fun navigateToDetail(characterId: Int) {
+        binding.searchView.setQuery("", false)
+        val action = ListFragmentDirections.actionListFragmentToDetailFragment(characterId)
+        findNavController().navigate(action)
+    }
+
     private fun initObservers() {
         listViewModel.charactersList.observe(viewLifecycleOwner) { result ->
             result.fold(onSuccess = {
                 characters = it
                 charactersAdapter.submitList(it)
             }, onFailure = {
-                Log.e("characters error",it.message.toString())
+                Log.e("characters error", it.message.toString())
             })
         }
+        listViewModel.isLoading.observe(viewLifecycleOwner) { result ->
+            result.fold(onSuccess = {
+                showLoading(it)
+            }, onFailure = {
+                Log.e("characters error", it.message.toString())
+            })
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.isVisible = isLoading
+        binding.recyclerView.isVisible = !isLoading
     }
 
     fun onSearchSubmit(query: String) = listViewModel.onCharactersSearch(query)

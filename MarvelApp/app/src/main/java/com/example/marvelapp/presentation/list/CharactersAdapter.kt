@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.marvelapp.databinding.ItemCharacterBinding
 import com.example.marvelapp.domain.entities.Character
 
-class CharactersAdapter() :
+class CharactersAdapter(
+    private val action: (characterId: Int) -> Unit
+) :
     ListAdapter<Character, CharactersHolder>(CharactersDiffItemCallback()) {
 
     override fun onCreateViewHolder(
@@ -18,6 +20,7 @@ class CharactersAdapter() :
             parent,
             false
         ),
+        action
     )
 
     override fun onBindViewHolder(

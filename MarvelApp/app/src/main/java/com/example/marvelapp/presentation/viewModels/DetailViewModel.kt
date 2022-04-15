@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.marvelapp.domain.entities.Character
-import com.example.marvelapp.domain.useCases.GetByNameUseCase
-import com.example.marvelapp.domain.useCases.GetCharactersUseCase
+import com.example.marvelapp.domain.useCases.GetByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -14,39 +13,22 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
 
 @HiltViewModel
-class ListViewModel @Inject constructor(
-    private val getByNameUseCase: GetByNameUseCase,
-    private val getCharactersUseCase: GetCharactersUseCase
-) :
+class DetailViewModel @Inject constructor(private val getByIdUseCase: GetByIdUseCase) :
     ViewModel() {
-    private var _charactersList: MutableLiveData<Result<List<Character>>> = MutableLiveData()
-    val charactersList: LiveData<Result<List<Character>>> = _charactersList
+    private var _character: MutableLiveData<Result<Character>> = MutableLiveData()
+    val character: LiveData<Result<Character>> = _character
 
     private var _isLoading: MutableLiveData<Result<Boolean>> = MutableLiveData()
     val isLoading: LiveData<Result<Boolean>> = _isLoading
 
     private val disposables = CompositeDisposable()
 
-    fun onCharactersSearch(name: String) = getByNameUseCase(name)
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe {
-            _isLoading.postValue(Result.success(true))
-        }
-        .doAfterSuccess {
-            _isLoading.postValue(Result.success(false))
-        }
-        .subscribeBy(onSuccess = {
-            _charactersList.value = Result.success(it)
-        }, onError = { error ->
-            _charactersList.value = Result.failure(error)
-        }).addTo(disposables)
-
     override fun onCleared() {
         super.onCleared()
         disposables.dispose()
     }
 
-    fun getCharacters() = getCharactersUseCase()
+    fun getCharacter(characterId: Int) = getByIdUseCase(characterId)
         .observeOn(AndroidSchedulers.mainThread()).doOnSubscribe {
             _isLoading.value = Result.success(true)
         }
@@ -54,8 +36,8 @@ class ListViewModel @Inject constructor(
             _isLoading.value = Result.success(false)
         }
         .subscribeBy(onSuccess = {
-            _charactersList.value = Result.success(it)
+            _character.value = Result.success(it)
         }, onError = { error ->
-            _charactersList.value = Result.failure(error)
+            _character.value = Result.failure(error)
         }).addTo(disposables)
 }
