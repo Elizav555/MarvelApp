@@ -1,12 +1,12 @@
 package com.example.marvelapp.presentation
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.example.marvelapp.R
 import dagger.hilt.android.AndroidEntryPoint
+import moxy.MvpAppCompatActivity
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
