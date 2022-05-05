@@ -15,27 +15,25 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-
 @ExtendWith(MockKExtension::class)
-internal class GetByIdUseCaseTest {
-
+internal class GetByNameUseCaseTest {
     @MockK
     lateinit var charactersRep: CharactersRep
-    lateinit var getByIdUseCase: GetByIdUseCase
+    lateinit var getByNameUseCase: GetByNameUseCase
 
     @get:Rule
     val rxJavaRule = RxJavaRule()
 
     @BeforeEach
     fun setUp() {
-        getByIdUseCase = GetByIdUseCase(charactersRep)
+        getByNameUseCase = GetByNameUseCase(charactersRep)
     }
 
     @Test
-    @DisplayName("Test if we get right character when we pass its id")
+    @DisplayName("Test if we get right characters list when we pass its id")
     fun invokeTest() {
         // arrange
-        val expectedValue = 1012295
+        val expectedValue = "Spider-Man (Noir)"
         val expectedCharacterId = 1012295
         val expectedCharacterName = "Spider-Man (Noir)"
         val mockCharacter = mockk<Character>() {
@@ -43,39 +41,20 @@ internal class GetByIdUseCaseTest {
             every { name } returns expectedCharacterName
         }
         every {
-            charactersRep.getCharacterById(expectedValue)
-        } returns Single.just(mockCharacter)
+            charactersRep.getCharactersByName(expectedValue, 1)
+        } returns Single.just(listOf(mockCharacter))
 
         // act
-        val result = getByIdUseCase(expectedValue)
+        val result = getByNameUseCase(expectedValue, 1)
 
         // assert
         assertEquals(
             expectedCharacterId,
-            result.blockingGet().id
+            result.blockingGet().first().id
         )
         assertEquals(
             expectedCharacterName,
-            result.blockingGet().name
-        )
-    }
-
-    //TODO why not working
-    @Test
-    @DisplayName("When request character by wrong id, we awaiting error")
-    fun invokeTestException() {
-        // arrange
-        val expectedValue = 1012295
-        val mockError = mockk<Throwable>()
-        every {
-            charactersRep.getCharacterById(expectedValue)
-        } returns Single.error(mockError)
-        // act
-        val result = getByIdUseCase(expectedValue)
-        // assert
-        assertEquals(
-            mockError,
-            result.blockingGet()
+            result.blockingGet().first().name
         )
     }
 }

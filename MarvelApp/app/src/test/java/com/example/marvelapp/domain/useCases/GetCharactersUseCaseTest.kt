@@ -8,34 +8,31 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.reactivex.rxjava3.core.Single
-import junit.framework.Assert.assertEquals
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-
 @ExtendWith(MockKExtension::class)
-internal class GetByIdUseCaseTest {
-
+internal class GetCharactersUseCaseTest {
     @MockK
     lateinit var charactersRep: CharactersRep
-    lateinit var getByIdUseCase: GetByIdUseCase
+    lateinit var getCharactersUseCase: GetCharactersUseCase
 
     @get:Rule
     val rxJavaRule = RxJavaRule()
 
     @BeforeEach
     fun setUp() {
-        getByIdUseCase = GetByIdUseCase(charactersRep)
+        getCharactersUseCase = GetCharactersUseCase((charactersRep))
     }
 
     @Test
-    @DisplayName("Test if we get right character when we pass its id")
+    @DisplayName("Test if we get right characters list ")
     fun invokeTest() {
         // arrange
-        val expectedValue = 1012295
         val expectedCharacterId = 1012295
         val expectedCharacterName = "Spider-Man (Noir)"
         val mockCharacter = mockk<Character>() {
@@ -43,39 +40,20 @@ internal class GetByIdUseCaseTest {
             every { name } returns expectedCharacterName
         }
         every {
-            charactersRep.getCharacterById(expectedValue)
-        } returns Single.just(mockCharacter)
+            charactersRep.getCharacters(1)
+        } returns Single.just(listOf(mockCharacter))
 
         // act
-        val result = getByIdUseCase(expectedValue)
+        val result = getCharactersUseCase(1)
 
         // assert
         assertEquals(
             expectedCharacterId,
-            result.blockingGet().id
+            result.blockingGet().first().id
         )
         assertEquals(
             expectedCharacterName,
-            result.blockingGet().name
-        )
-    }
-
-    //TODO why not working
-    @Test
-    @DisplayName("When request character by wrong id, we awaiting error")
-    fun invokeTestException() {
-        // arrange
-        val expectedValue = 1012295
-        val mockError = mockk<Throwable>()
-        every {
-            charactersRep.getCharacterById(expectedValue)
-        } returns Single.error(mockError)
-        // act
-        val result = getByIdUseCase(expectedValue)
-        // assert
-        assertEquals(
-            mockError,
-            result.blockingGet()
+            result.blockingGet().first().name
         )
     }
 }

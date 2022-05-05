@@ -9,8 +9,8 @@ import javax.inject.Inject
 class GetCharactersUseCase @Inject constructor(
     private val charactersRep: CharactersRep
 ) {
-    operator fun invoke(): Single<List<Character>> =
-        charactersRep.getCharacters(20).subscribeOn(
+    operator fun invoke(limit: Int = 20): Single<List<Character>> =
+        charactersRep.getCharacters(limit).subscribeOn(
             Schedulers.io()
         )
 }
