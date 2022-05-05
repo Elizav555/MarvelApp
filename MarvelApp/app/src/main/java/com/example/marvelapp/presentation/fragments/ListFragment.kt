@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.marvelapp.databinding.FragmentListBinding
@@ -121,8 +120,7 @@ class ListFragment : MvpAppCompatFragment(), CharactersListView {
 
     override fun navigateToDetail(characterId: Int) {
         binding.searchView.setQuery("", false)
-        val action = ListFragmentDirections.actionListFragmentToDetailFragment(characterId)
-        findNavController().navigate(action)
+        listPresenter.navigateToDetails(characterId)
     }
 
     private fun manageLoading(isLoading: Boolean) {
