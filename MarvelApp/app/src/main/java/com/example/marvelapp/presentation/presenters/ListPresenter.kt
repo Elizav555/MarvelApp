@@ -45,7 +45,7 @@ class ListPresenter @Inject constructor(
         .subscribeBy(onSuccess = {
             viewState.updateList(it)
         }, onError = { error ->
-            viewState.showError(error.message ?: "error")
+            viewState.showError(error)
         }).addTo(disposables)
 
     fun getCharacters() = getCharactersUseCase()
@@ -59,6 +59,6 @@ class ListPresenter @Inject constructor(
         .subscribeBy(onSuccess = {
             viewState.updateList(it)
         }, onError = { error ->
-            viewState.showError(error.message ?: "error")
+            viewState.showError(error)
         }).addTo(disposables)
 }

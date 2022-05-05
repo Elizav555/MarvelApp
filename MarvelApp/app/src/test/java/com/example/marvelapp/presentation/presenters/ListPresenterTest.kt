@@ -91,4 +91,28 @@ internal class ListPresenterTest {
             viewState.updateList(listOf(mockCharacter))
         }
     }
+
+    @Test
+    fun onCharactersSearchError() {
+        // arrange
+        val mockError = mockk<Throwable>()
+        val expectedSearch = "Spider"
+        every {
+            getByNameUseCase(expectedSearch)
+        } returns Single.error(mockError)
+
+        // act
+        presenter.onCharactersSearch(expectedSearch)
+
+        // assert
+        verifyOrder {
+            viewState.showLoading()
+        }
+        verify(inverse = true) {
+            viewState.updateList(any())
+        }
+        verify {
+            viewState.showError(mockError)
+        }
+    }
 }
