@@ -5,8 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.navArgs
 import coil.api.load
 import com.example.marvelapp.databinding.FragmentDetailBinding
 import com.example.marvelapp.domain.entities.Character
@@ -27,7 +27,9 @@ class DetailFragment : MvpAppCompatFragment(), DetailView {
 
     @ProvidePresenter
     fun provideDetailPresenter(): DetailPresenter = detailPresenter
-    private val args: DetailFragmentArgs by navArgs()
+    private val characterId: Int? by lazy {
+        arguments?.getInt(CHARACTER_ID, -1)
+    }
     private lateinit var binding: FragmentDetailBinding
 
     override fun onCreateView(
@@ -41,8 +43,9 @@ class DetailFragment : MvpAppCompatFragment(), DetailView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detailPresenter.getCharacter(args.characterId)
+        characterId?.let { if (it != -1) detailPresenter.getCharacter(it) }
     }
+
 
     private fun bindInfo(character: Character) {
         with(binding) {
@@ -71,5 +74,12 @@ class DetailFragment : MvpAppCompatFragment(), DetailView {
             "Some error appeared while loading character",
             Snackbar.LENGTH_SHORT
         ).show()
+    }
+
+    companion object {
+        private const val CHARACTER_ID = "CHARACTER_ID"
+
+        fun newInstance(characterId: Int) =
+            DetailFragment().apply { arguments = bundleOf(CHARACTER_ID to characterId) }
     }
 }
