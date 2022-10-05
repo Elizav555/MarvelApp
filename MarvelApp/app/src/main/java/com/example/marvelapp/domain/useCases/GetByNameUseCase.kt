@@ -9,8 +9,8 @@ import javax.inject.Inject
 class GetByNameUseCase @Inject constructor(
     private val charactersRep: CharactersRep
 ) {
-    operator fun invoke(name: String): Single<List<Character>> =
-        charactersRep.getCharactersByName(name, 20).subscribeOn(
+    operator fun invoke(name: String, limit: Int = 20): Single<List<Character>> =
+        charactersRep.getCharactersByName(name, limit).subscribeOn(
             Schedulers.io()
         )
 }

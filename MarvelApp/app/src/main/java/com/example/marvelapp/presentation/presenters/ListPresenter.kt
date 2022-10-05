@@ -5,7 +5,7 @@ import com.example.marvelapp.domain.useCases.GetCharactersUseCase
 import com.example.marvelapp.presentation.Screens
 import com.example.marvelapp.presentation.views.CharactersListView
 import com.github.terrakok.cicerone.Router
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -15,7 +15,8 @@ import javax.inject.Inject
 class ListPresenter @Inject constructor(
     private val getByNameUseCase: GetByNameUseCase,
     private val getCharactersUseCase: GetCharactersUseCase,
-    private val router: Router
+    private val router: Router,
+    private val scheduler: Scheduler
 ) : MvpPresenter<CharactersListView>() {
     private val disposables = CompositeDisposable()
 
@@ -34,7 +35,7 @@ class ListPresenter @Inject constructor(
     }
 
     fun onCharactersSearch(name: String) = getByNameUseCase(name)
-        .observeOn(AndroidSchedulers.mainThread())
+        .observeOn(scheduler)
         .doOnSubscribe {
             viewState.showLoading()
         }
@@ -44,11 +45,11 @@ class ListPresenter @Inject constructor(
         .subscribeBy(onSuccess = {
             viewState.updateList(it)
         }, onError = { error ->
-            viewState.showError(error.message ?: "error")
+            viewState.showError(error)
         }).addTo(disposables)
 
-    private fun getCharacters() = getCharactersUseCase()
-        .observeOn(AndroidSchedulers.mainThread())
+    fun getCharacters() = getCharactersUseCase()
+        .observeOn(scheduler)
         .doOnSubscribe {
             viewState.showLoading()
         }
@@ -58,6 +59,6 @@ class ListPresenter @Inject constructor(
         .subscribeBy(onSuccess = {
             viewState.updateList(it)
         }, onError = { error ->
-            viewState.showError(error.message ?: "error")
+            viewState.showError(error)
         }).addTo(disposables)
 }

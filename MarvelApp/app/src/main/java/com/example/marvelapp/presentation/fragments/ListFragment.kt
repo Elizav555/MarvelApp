@@ -108,9 +108,9 @@ class ListFragment : MvpAppCompatFragment(), CharactersListView {
             ).show()
     }
 
-    override fun showError(text: String) {
+    override fun showError(error: Throwable) {
         manageLoading(false)
-        Log.e("ListError", text)
+        Log.e("ListError", error.message ?: "error")
         Snackbar.make(
             binding.root,
             "Some error appeared while loading characters",

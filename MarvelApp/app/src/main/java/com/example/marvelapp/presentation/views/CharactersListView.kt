@@ -13,7 +13,7 @@ interface CharactersListView : MvpView {
     fun updateList(characters: List<Character>)
 
     @Skip
-    fun showError(text: String)
+    fun showError(error: Throwable)
 
     @OneExecution
     fun navigateToDetail(characterId: Int)

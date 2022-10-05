@@ -12,5 +12,5 @@ interface DetailView : MvpView {
     fun hideLoading()
 
     @Skip
-    fun showError(text: String)
+    fun showError(error: Throwable)
 }

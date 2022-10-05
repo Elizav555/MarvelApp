@@ -66,9 +66,9 @@ class DetailFragment : MvpAppCompatFragment(), DetailView {
 
     override fun hideLoading() = manageLoading(false)
 
-    override fun showError(text: String) {
+    override fun showError(error: Throwable) {
         manageLoading(false)
-        Log.e("Detail error", text)
+        Log.e("Detail error", error.message ?: "error")
         Snackbar.make(
             binding.root,
             "Some error appeared while loading character",
