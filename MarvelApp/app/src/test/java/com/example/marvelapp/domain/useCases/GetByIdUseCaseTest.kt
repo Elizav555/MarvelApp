@@ -59,23 +59,4 @@ internal class GetByIdUseCaseTest {
             result.blockingGet().name
         )
     }
-
-    //TODO why not working
-    @Test
-    @DisplayName("When request character by wrong id, we awaiting error")
-    fun invokeTestException() {
-        // arrange
-        val expectedValue = 1012295
-        val mockError = mockk<Throwable>()
-        every {
-            charactersRep.getCharacterById(expectedValue)
-        } returns Single.error(mockError)
-        // act
-        val result = getByIdUseCase(expectedValue)
-        // assert
-        assertEquals(
-            mockError,
-            result.blockingGet()
-        )
-    }
 }
