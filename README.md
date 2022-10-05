@@ -6,7 +6,7 @@ My First MVP and RxJava practice
 - Navigation using router
 - Display characters list and their detailed info
 - MVP architecture
-- Each Api call includes md5 hash from private and public api keys,timestamp
+- Each Api call includes md5 hash from private and public api keys, timestamp
 - Some tests
 
 ## Stack
