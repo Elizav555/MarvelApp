@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MarvelApp</string>
+    <string name="error">Some error appeared while loading character</string>
+    <string name="no_characters">Ups, there\'s no characters we can show you</string>
 </resources>

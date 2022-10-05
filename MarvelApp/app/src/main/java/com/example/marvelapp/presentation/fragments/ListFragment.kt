@@ -9,6 +9,7 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.marvelapp.R
 import com.example.marvelapp.databinding.FragmentListBinding
 import com.example.marvelapp.domain.entities.Character
 import com.example.marvelapp.presentation.list.CharactersAdapter
@@ -24,11 +25,11 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ListFragment : MvpAppCompatFragment(), CharactersListView {
@@ -103,17 +104,16 @@ class ListFragment : MvpAppCompatFragment(), CharactersListView {
         if (characters.isEmpty())
             Snackbar.make(
                 binding.root,
-                "Ups, there's no characters we can show you",
+                getString(R.string.no_characters),
                 Snackbar.LENGTH_SHORT
             ).show()
     }
 
     override fun showError(error: Throwable) {
         manageLoading(false)
-        Log.e("ListError", error.message ?: "error")
         Snackbar.make(
             binding.root,
-            "Some error appeared while loading characters",
+            getString(R.string.error),
             Snackbar.LENGTH_SHORT
         ).show()
     }

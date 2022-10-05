@@ -1,23 +1,23 @@
 package com.example.marvelapp.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import coil.api.load
+import com.example.marvelapp.R
 import com.example.marvelapp.databinding.FragmentDetailBinding
 import com.example.marvelapp.domain.entities.Character
 import com.example.marvelapp.presentation.presenters.DetailPresenter
 import com.example.marvelapp.presentation.views.DetailView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailFragment : MvpAppCompatFragment(), DetailView {
@@ -68,10 +68,9 @@ class DetailFragment : MvpAppCompatFragment(), DetailView {
 
     override fun showError(error: Throwable) {
         manageLoading(false)
-        Log.e("Detail error", error.message ?: "error")
         Snackbar.make(
             binding.root,
-            "Some error appeared while loading character",
+            getString(R.string.error),
             Snackbar.LENGTH_SHORT
         ).show()
     }
