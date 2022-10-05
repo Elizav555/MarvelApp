@@ -22,7 +22,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -59,8 +58,8 @@ class ListFragment : MvpAppCompatFragment(), CharactersListView {
         configureSearch()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         disposables.dispose()
     }
 
@@ -75,7 +74,7 @@ class ListFragment : MvpAppCompatFragment(), CharactersListView {
                 onSearchSubmit(it)
             }, onError = {
                 Log.e("search", it.message.toString())
-            }).addTo(disposables)
+            })
     }
 
     private fun init() {
